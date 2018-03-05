@@ -23,6 +23,7 @@ ONBUILD RUN cd /src && \
 # Prepare the sources.
 #======================================
 ONBUILD COPY / /src/
+ONBUILD RUN cd /src && /src/bin/build.sh
 ONBUILD RUN cd /src && \
     mvn --settings /m2/settings.xml clean install ${MAVEN_EXTRA_PARAMETERS}
 
