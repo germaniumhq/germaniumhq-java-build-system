@@ -1,3 +1,14 @@
+stage('Build Base Java + Maven') {
+    node {
+        deleteDir()
+
+        checkout scm
+
+        dockerBuild file: './jdk8-maven/Dockerfile',
+            tags: ['germaniumhq/jdk8-maven']
+    }
+}
+
 stage('Build Java Image') {
     def buildJavaContainers = [:]
 
@@ -9,17 +20,6 @@ stage('Build Java Image') {
 
             dockerBuild file: './maven-build/Dockerfile',
                 tags: ['germaniumhq/maven-build']
-        }
-    }
-
-    buildJavaContainers."Java8 Runtime" = {
-        node {
-            deleteDir()
-
-            checkout scm
-
-            dockerBuild file: './java-run/Dockerfile',
-                tags: ['germaniumhq/java8']
         }
     }
 

@@ -1,12 +1,22 @@
-FROM maven:3.5.2-jdk-8
+FROM germaniumhq/jdk8-maven
 
 COPY settings.xml /m2/settings.xml
 
 #======================================
 # Prepare binary dependencies
 #======================================
-ONBUILD COPY bin/* /src/bin/
-ONBUILD RUN chmod +x /src/bin/* && [ -f /src/bin/setup.sh ] && /src/bin/setup.sh
+ONBUILD COPY bin/setup.sh /src/bin/
+ONBUILD RUN chmod +x /src/bin/setup.sh && \
+            /src/bin/setup.sh && \
+            chown -R germanium:germanium /src /m2
+
+ONBUILD ARG DISPLAY=vnc-server:0
+ONBUILD ARG MAVEN_EXTRA_PARAMETERS=
+
+ONBUILD ENV DISPLAY=${DISPLAY} \
+            MAVEN_EXTRA_PARAMETERS=${MAVEN_EXTRA_PARAMETERS}
+
+ONBUILD USER germanium
 
 #======================================
 # Prepare dependencies for download
@@ -19,7 +29,12 @@ ONBUILD RUN cd /src && \
 # Prepare the sources.
 #======================================
 ONBUILD COPY / /src/
-ONBUILD RUN cd /src && /src/bin/build.sh
-ONBUILD RUN cd /src && \
+ONBUILD USER root
+ONBUILD RUN chown -R germanium:germanium /src /m2 && \
+        chmod +x /src/bin/* && \
+        /src/bin/build.sh
+ONBUILD USER germanium
+ONBUILD CMD cd /src && \
+    env && \
     mvn --settings /m2/settings.xml clean install ${MAVEN_EXTRA_PARAMETERS}
 
