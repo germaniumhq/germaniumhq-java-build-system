@@ -36,5 +36,6 @@ ONBUILD RUN chown -R germanium:germanium /src /m2 && \
 ONBUILD USER germanium
 ONBUILD CMD cd /src && \
     env && \
-    mvn --settings /m2/settings.xml clean install ${MAVEN_EXTRA_PARAMETERS}
+    echo "RUNNING: mvn ${MAVEN_EXTRA_PARAMETERS} --settings /m2/settings.xml clean install" && \
+    bash -c "mvn ${MAVEN_EXTRA_PARAMETERS} --settings /m2/settings.xml clean install"
 
