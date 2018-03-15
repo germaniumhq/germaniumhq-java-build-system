@@ -1,4 +1,4 @@
-FROM maven:3.5.2-jdk-8
+FROM germaniumhq/jdk8-maven
 
 #======================================
 # Prepare binary dependencies
@@ -11,6 +11,9 @@ ONBUILD RUN chmod +x /src/bin/* && [ -f /src/bin/setup.sh ] && /src/bin/setup.sh
 # shared.
 #======================================
 ONBUILD COPY --from=child-image /m2 /m2
+ONBUILD RUN chown -R germanium:germanium /m2
+
+ONBUILD USER germanium
 
 #======================================
 # Prepare dependencies for download
@@ -23,7 +26,13 @@ ONBUILD RUN cd /src && \
 # Prepare the sources.
 #======================================
 ONBUILD COPY / /src/
-ONBUILD RUN cd /src && /src/bin/build.sh
-ONBUILD RUN cd /src && \
-    mvn --settings /m2/settings.xml clean install ${MAVEN_EXTRA_PARAMETERS}
+ONBUILD USER root
+ONBUILD RUN chown -R germanium:germanium /src /m2 && \
+        chmod +x /src/bin/* && \
+        /src/bin/build.sh
+ONBUILD USER germanium
+ONBUILD CMD cd /src && \
+    env && \
+    echo "RUNNING: mvn ${MAVEN_EXTRA_PARAMETERS} --settings /m2/settings.xml clean install" && \
+    bash -c "mvn ${MAVEN_EXTRA_PARAMETERS} --settings /m2/settings.xml clean install"
 
