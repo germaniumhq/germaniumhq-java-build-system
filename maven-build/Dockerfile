@@ -31,10 +31,11 @@ ONBUILD COPY --chown=germanium:germanium _gbs/build/prepare-build2.sh /src/_gbs/
 ONBUILD RUN /_gbs/start.sh _gbs/build/prepare-build2.sh
 
 # build3
-ONBUILD COPY --chown=germanium:germanium _gbs/build/prepare-build3.sh /src/_gbs/build/prepare-build3.sh
+# everything needed before the _gbs is copied before the 3rd stage
+ONBUILD COPY --chown=germanium:germanium _gbs /src/_gbs
 ONBUILD RUN /_gbs/start.sh _gbs/build/prepare-build3.sh
 
-# sources are copied only before stage 3
+# sources are copied only after stage 3
 ONBUILD COPY --chown=germanium:germanium . /src
 
 #======================================
