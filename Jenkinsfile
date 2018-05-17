@@ -4,8 +4,8 @@ stage('Build Base Java + Maven') {
 
         checkout scm
 
-        dockerBuild file: './jdk8-maven/Dockerfile',
-            tags: ['germaniumhq/jdk8-maven']
+        dockerBuild file: './jdk8-base/Dockerfile',
+            tags: ['germaniumhq/jdk8-base']
     }
 }
 
@@ -18,19 +18,19 @@ stage('Build Java Image') {
 
             checkout scm
 
-            dockerBuild file: './maven-build/Dockerfile',
-                tags: ['germaniumhq/maven-build']
+            dockerBuild file: './jdk8-build/Dockerfile',
+                tags: ['germaniumhq/jdk8-build']
         }
     }
 
-    buildJavaContainers."Maven Child + Java8" = {
+    buildJavaContainers."Maven Child+Java8" = {
         node {
             deleteDir()
 
             checkout scm
 
-            dockerBuild file: './maven-child-build/Dockerfile',
-                tags: ['germaniumhq/maven-child-build']
+            dockerBuild file: './jdk8-child-build/Dockerfile',
+                tags: ['germaniumhq/jdk8-child-build']
         }
     }
 
