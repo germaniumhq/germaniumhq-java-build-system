@@ -10,7 +10,7 @@ RUN  echo "deb http://archive.ubuntu.com/ubuntu xenial main universe\n" > /etc/a
 #======================================
 # Create the main user.
 #======================================
-RUN useradd -m germanium
+RUN useradd -m --home-dir /germanium germanium
 
 #================================================
 # Miscellaneous packages
@@ -26,14 +26,20 @@ RUN apt-get update -qqy \
     unzip \
     curl \
     wget \
+    locales \
+  && locale-gen en_US.UTF-8 \
   && rm -rf /var/lib/apt/lists/* /var/cache/apt/* \
   && sed -i 's/securerandom\.source=file:\/dev\/random/securerandom\.source=file:\/dev\/urandom/' ./usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
+
+ENV LANG="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8" \
+    LC_LANG="en_US.UTF-8"
 
 #======================================
 # Install maven
 #======================================
 ARG MAVEN_VERSION=3.5.3
-ARG USER_HOME_DIR="/home/germanium"
+ARG USER_HOME_DIR="/germanium"
 ARG SHA=b52956373fab1dd4277926507ab189fb797b3bc51a2a267a193c931fffad8408
 ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
 
