@@ -1,4 +1,7 @@
-FROM germaniumhq/jdk8-base
+FROM germaniumhq/jdk8-base:8
+
+USER root
+
 COPY _gbs /_gbs/
 
 RUN chmod +x _gbs/start.sh && \
@@ -18,7 +21,7 @@ ONBUILD RUN /_gbs/start.sh _gbs/build/install-software/install-software.sh
 #======================================
 ONBUILD USER germanium
 
-ONBUILD COPY --chown=germanium:germanium --from=child-image /m2 /m2
+ONBUILD COPY --chown=germanium:germanium --from=child-image /germanium/.m2 /germanium/.m2
 
 # build1
 ONBUILD COPY --chown=germanium:germanium _gbs/build/prepare-build1 /src/_gbs/build/prepare-build1
@@ -38,5 +41,4 @@ ONBUILD COPY --chown=germanium:germanium . /src
 #======================================
 # Do the actual build.
 #======================================
-ONBUILD CMD /_gbs/start.sh _gbs/build/run-build.sh
-
+ONBUILD RUN /_gbs/start.sh _gbs/build/run-build.sh

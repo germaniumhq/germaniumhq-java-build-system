@@ -1,13 +1,14 @@
-FROM germaniumhq/jdk8-base
+FROM germaniumhq/jdk8-base:8
 
-COPY settings.xml /m2/settings.xml
+USER root
+
 COPY _gbs /_gbs/
 
 RUN chmod +x _gbs/start.sh && \
     chmod +x _gbs/run/* && \
     chmod +x _gbs/build/*/*.sh _gbs/build/*.sh _gbs/*.sh && \
     mkdir /src && \
-    chown -R germanium:germanium /m2 /src /_gbs
+    chown -R germanium:germanium /src /_gbs
 
 #======================================
 # Install prerequisite software
@@ -38,5 +39,4 @@ ONBUILD COPY --chown=germanium:germanium . /src
 #======================================
 # Do the actual build.
 #======================================
-ONBUILD CMD /_gbs/start.sh _gbs/build/run-build.sh
-
+ONBUILD RUN /_gbs/start.sh _gbs/build/run-build.sh
