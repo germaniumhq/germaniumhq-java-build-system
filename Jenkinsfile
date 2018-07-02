@@ -1,39 +1,13 @@
-stage('Build Base Java + Maven') {
-    node {
-        deleteDir()
+def baseImages = [
+    'germaniumhq/jdk8-base:8': 'jdk8-base'
+]
 
-        checkout scm
+def runImages = [
+    'germaniumhq/jdk8-build:8': 'jdk8-build',
+    'germaniumhq/jdk8-child-build:8': 'jdk8-child-build',
+]
 
-        dockerBuild file: './jdk8-base/Dockerfile',
-            tags: ['germaniumhq/jdk8-base']
-    }
-}
-
-stage('Build Java Image') {
-    def buildJavaContainers = [:]
-
-    buildJavaContainers."Maven+Java8" = {
-        node {
-            deleteDir()
-
-            checkout scm
-
-            dockerBuild file: './jdk8-build/Dockerfile',
-                tags: ['germaniumhq/jdk8-build']
-        }
-    }
-
-    buildJavaContainers."Maven Child+Java8" = {
-        node {
-            deleteDir()
-
-            checkout scm
-
-            dockerBuild file: './jdk8-child-build/Dockerfile',
-                tags: ['germaniumhq/jdk8-child-build']
-        }
-    }
-
-    parallel(buildJavaContainers)
-}
+germaniumBuildSystemPipeline(
+    baseImages: baseImages,
+    runImages: runImages)
 
