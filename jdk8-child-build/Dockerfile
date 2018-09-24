@@ -11,29 +11,36 @@ RUN chmod +x _gbs/start.sh && \
     chown -R germanium:germanium /src /_gbs
 
 #======================================
+# Allow sub-folder GBSs
+#======================================
+
+# Must end, and start with slash.
+ONBUILD ARG GBS_PREFIX="/"
+
+#======================================
 # Install prerequisite software
 #======================================
-ONBUILD COPY --chown=germanium:germanium  _gbs/build/install-software /src/_gbs/build/install-software
-ONBUILD RUN /_gbs/start.sh _gbs/build/install-software/install-software.sh
+ONBUILD COPY --chown=germanium:germanium ${GBS_PREFIX}_gbs/build/install-software /src${GBS_PREFIX}_gbs/build/install-software
+ONBUILD RUN /_gbs/start.sh /src${GBS_PREFIX}_gbs/build/install-software/install-software.sh
 
 #======================================
 # Prepare dependencies for download
 #======================================
 ONBUILD USER germanium
 
-ONBUILD COPY --chown=germanium:germanium --from=child-image /germanium/.m2 /germanium/.m2
+ONBUILD COPY --chown=germanium:germanium --from=child-image m2 m2
 
 # build1
-ONBUILD COPY --chown=germanium:germanium _gbs/build/prepare-build1 /src/_gbs/build/prepare-build1
-ONBUILD RUN /_gbs/start.sh _gbs/build/prepare-build1/prepare-build1.sh
+ONBUILD COPY --chown=germanium:germanium ${GBS_PREFIX}_gbs/build/prepare-build1 /src${GBS_PREFIX}_gbs/build/prepare-build1
+ONBUILD RUN /_gbs/start.sh /src${GBS_PREFIX}_gbs/build/prepare-build1/prepare-build1.sh
 
 # build2
-ONBUILD COPY --chown=germanium:germanium _gbs/build/prepare-build2 /src/_gbs/build/prepare-build2
-ONBUILD RUN /_gbs/start.sh _gbs/build/prepare-build2/prepare-build2.sh
+ONBUILD COPY --chown=germanium:germanium ${GBS_PREFIX}_gbs/build/prepare-build2 /src${GBS_PREFIX}_gbs/build/prepare-build2
+ONBUILD RUN /_gbs/start.sh /src${GBS_PREFIX}_gbs/build/prepare-build2/prepare-build2.sh
 
 # build3
-ONBUILD COPY --chown=germanium:germanium _gbs/build/prepare-build3 /src/_gbs/build/prepare-build3
-ONBUILD RUN /_gbs/start.sh _gbs/build/prepare-build3/prepare-build3.sh
+ONBUILD COPY --chown=germanium:germanium ${GBS_PREFIX}_gbs/build/prepare-build3 /src/_gbs/build/prepare-build3
+ONBUILD RUN /_gbs/start.sh /src${GBS_PREFIX}_gbs/build/prepare-build3/prepare-build3.sh
 
 # sources are copied only after stage 3
 ONBUILD COPY --chown=germanium:germanium . /src
@@ -41,4 +48,4 @@ ONBUILD COPY --chown=germanium:germanium . /src
 #======================================
 # Do the actual build.
 #======================================
-ONBUILD RUN /_gbs/start.sh _gbs/build/run-build.sh
+ONBUILD RUN /_gbs/start.sh /src${GBS_PREFIX}_gbs/build/run-build.sh

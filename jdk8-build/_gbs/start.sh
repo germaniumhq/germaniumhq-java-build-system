@@ -9,10 +9,7 @@ while [[ "$FILENAME" != "/" && "$FILENAME" != "." ]]; do
     FILENAME=$(dirname $FILENAME)
 done # [[ "$FILENAME" != "/" ]]
 
-if grep -q '[^[:space:]]' < "$1"; then
-    chmod +x ./$1
-    ./$1
-else
-    /$1
-fi
+test -x $1 || chmod +x .$1
+
+$1
 
