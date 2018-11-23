@@ -3,8 +3,10 @@ from unittest import TestCase
 import subprocess
 import re
 
-assertEqual = TestCase().assertEqual
-assertFalse = TestCase().assertFalse
+test_case = TestCase()
+test_case.maxDiff = None
+assertEqual = test_case.assertEqual
+assertFalse = test_case.assertFalse
 
 VERSION_MATCHER = re.compile('^Python ((\d+\.\d+)\.\d+)')
 

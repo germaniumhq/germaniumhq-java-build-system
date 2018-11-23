@@ -2,7 +2,7 @@ Feature: The versions for the containers should match correctly
     the expected values.
 
 Scenario: Test java 1.8
-Given I run the docker container for 'germaniumhq/jdk8-base:8'
+Given I run the docker container for 'germaniumhq/jdk:8'
 When I get the version of the default java command
 Then I get as version '1.8.0'
 When I run in the container 'which java'
